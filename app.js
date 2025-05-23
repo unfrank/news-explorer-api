@@ -3,6 +3,13 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import auth from "./middlewares/auth.js";
+
+import limiter from "./middlewares/rate-limiter.js";
+import { requestLogger, errorLogger } from "./middlewares/logger.js";
+import { BadRequestError, UnauthorizedError } from "./errors/index.js";
+
+import errorHandler from "./middlewares/error-handler.js";
 
 import articlesRouter from "./routes/articles.js";
 
@@ -21,9 +28,12 @@ app.use(express.json());
 
 // ✅ Mount auth routes before protected ones
 app.use(authRoutes);
-
+app.use(limiter);
+app.use(requestLogger);
+app.use(errorLogger);
+app.use(errorHandler);
 // ✅ Then mount article routes
-app.use("/articles", articlesRouter);
+app.use("/articles", auth, articlesRouter);
 
 // Root route
 app.get("/", (req, res) => {
