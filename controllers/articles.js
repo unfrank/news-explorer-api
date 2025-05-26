@@ -1,5 +1,10 @@
 import Article from "../models/article.js";
 import mongoose from "mongoose";
+import {
+  NotFoundError,
+  ForbiddenError,
+  BadRequestError,
+} from "../errors/index.js";
 
 // const DUMMY_USER_ID = new mongoose.Types.ObjectId("000000000000000000000001"); // replace later with real user ID
 
@@ -19,35 +24,32 @@ export const saveArticle = async (req, res) => {
   try {
     const article = await Article.create({
       ...req.body,
-      // owner: DUMMY_USER_ID,
       owner: req.user._id,
     });
     res.status(201).send(article);
   } catch (err) {
-    res
-      .status(400)
-      .send({ error: "Failed to save article", details: err.message });
+    throw new BadRequestError(`Failed to save article: ${err.message}`);
   }
 };
 
 export const deleteArticle = async (req, res) => {
   try {
-    const article = await Article.findOneAndDelete({
-      _id: req.params.id,
-      // owner: DUMMY_USER_ID,
-      owner: req.user._id,
-    });
+    const article = await Article.findById(req.params.id);
 
     if (!article) {
-      return res
-        .status(404)
-        .send({ error: "Article not found or not owned by user" });
+      throw new NotFoundError("Article not found");
     }
+
+    if (!article.owner.equals(req.user._id)) {
+      throw new ForbiddenError(
+        "You do not have permission to delete this article"
+      );
+    }
+
+    await article.deleteOne();
 
     res.send({ message: "Article deleted" });
   } catch (err) {
-    res
-      .status(400)
-      .send({ error: "Failed to delete article", details: err.message });
+    throw new BadRequestError(`Failed to delete article: ${err.message}`);
   }
 };

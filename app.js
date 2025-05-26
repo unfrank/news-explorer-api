@@ -1,8 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
 import cors from "cors";
 
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 import auth from "./middlewares/auth.js";
 
 import limiter from "./middlewares/rate-limiter.js";
@@ -14,8 +15,6 @@ import errorHandler from "./middlewares/error-handler.js";
 import articlesRouter from "./routes/articles.js";
 
 import authRoutes from "./routes/auth.js";
-
-dotenv.config();
 
 const { PORT = 3000, MONGO_URI = "mongodb://127.0.0.1:27017/newsdb" } =
   process.env;
