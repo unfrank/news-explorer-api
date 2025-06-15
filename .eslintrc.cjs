@@ -8,7 +8,5 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  rules: {
-    // You can add overrides here
-  },
+  rules: {},
 };

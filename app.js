@@ -1,40 +1,30 @@
 import dotenv from "dotenv";
-dotenv.config();
 import cors from "cors";
-
 import express from "express";
 import mongoose from "mongoose";
 import auth from "./middlewares/auth.js";
-
 import limiter from "./middlewares/rate-limiter.js";
 import { requestLogger, errorLogger } from "./middlewares/logger.js";
-import { BadRequestError, UnauthorizedError } from "./errors/index.js";
-
 import errorHandler from "./middlewares/error-handler.js";
-
 import articlesRouter from "./routes/articles.js";
-
 import authRoutes from "./routes/auth.js";
+
+dotenv.config();
 
 const { PORT = 3000, MONGO_URI = "mongodb://127.0.0.1:27017/newsdb" } =
   process.env;
-
 const app = express();
 
-// ✅ Good order: enable CORS *before* any routes
 app.use(cors());
 app.use(express.json());
 
-// ✅ Mount auth routes before protected ones
 app.use(authRoutes);
 app.use(limiter);
 app.use(requestLogger);
 app.use(errorLogger);
 app.use(errorHandler);
-// ✅ Then mount article routes
 app.use("/articles", auth, articlesRouter);
 
-// Root route
 app.get("/", (req, res) => {
   res.send({ message: "News Explorer API is running!" });
 });

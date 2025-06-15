@@ -1,16 +1,12 @@
 import Article from "../models/article.js";
-import mongoose from "mongoose";
 import {
   NotFoundError,
   ForbiddenError,
   BadRequestError,
 } from "../errors/index.js";
 
-// const DUMMY_USER_ID = new mongoose.Types.ObjectId("000000000000000000000001"); // replace later with real user ID
-
 export const getArticles = async (req, res) => {
   try {
-    // const articles = await Article.find({ owner: DUMMY_USER_ID });
     const articles = await Article.find({ owner: req.user._id });
     res.status(200).send(articles);
   } catch (err) {
