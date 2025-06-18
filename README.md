@@ -62,7 +62,8 @@ npm run dev
 ### 6. The backend will be running at:
 
 ```bash
-http://localhost:3000/
+https://news-explorer-api-n5y3.onrender.com
+
 ```
 
 ---
@@ -85,7 +86,12 @@ The `/news` route securely forwards search requests to NewsAPI using the backend
 ### Example usage:
 
 ```bash
+# Development (local):
 GET http://localhost:3000/news?query=tesla
+
+# Deployed (Render):
+GET https://news-explorer-api-n5y3.onrender.com/news?query=tesla
+
 ```
 
 ---
